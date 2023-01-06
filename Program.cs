@@ -1,3 +1,7 @@
+using Microsoft.EntityFrameworkCore;
+using StudentAdminPortal.API.Data;
+using StudentAdminPortal.API.Repositories;
+
 namespace StudentAdminPortal.API
 {
     public class Program
@@ -13,6 +17,14 @@ namespace StudentAdminPortal.API
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddDbContext<StudentAdminContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("ConnStr"));
+            }, ServiceLifetime.Transient);
+
+            builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+
+            builder.Services.AddAutoMapper(typeof(Program).Assembly);
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
