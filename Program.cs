@@ -11,7 +11,16 @@ namespace StudentAdminPortal.API
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
+            builder.Services.AddCors((options =>
+            {
+                options.AddPolicy("angularApplication", (builder) =>
+                {
+                    builder.WithOrigins("http://localhost:4200")
+                    .AllowAnyHeader()
+                    .WithMethods("GET", "POST", "PUT", "DELETE")
+                    .WithExposedHeaders("*");
+                });
+            }));
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -37,7 +46,9 @@ namespace StudentAdminPortal.API
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
+            app.UseRouting();
 
+            app.UseCors("angularApplication");
 
             app.MapControllers();
 
