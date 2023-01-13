@@ -29,9 +29,10 @@ namespace StudentAdminPortal.API
             builder.Services.AddDbContext<StudentAdminContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("ConnStr"));
-            }, ServiceLifetime.Transient);
+            }, ServiceLifetime.Scoped);
 
             builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+            builder.Services.AddScoped<IGenderRepository, GenderRepository>();
 
             builder.Services.AddAutoMapper(typeof(Program).Assembly);
             var app = builder.Build();
