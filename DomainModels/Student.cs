@@ -8,7 +8,7 @@
         public DateTime DateOfBirth { get; set; }
         public string Email { get; set; }
         public long Mobile { get; set; }
-        public string ProfileImageURL { get; set; }
+        public string ProfileImageUrl { get; set; }
         public Guid GenderId { get; set; }
 
         public Gender Gender { get; set; }

@@ -1,6 +1,10 @@
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using StudentAdminPortal.API.Data;
 using StudentAdminPortal.API.Repositories;
+using FluentValidation.AspNetCore;
+using FluentValidation;
 
 namespace StudentAdminPortal.API
 {
@@ -17,7 +21,7 @@ namespace StudentAdminPortal.API
                 {
                     builder.WithOrigins("http://localhost:4200")
                     .AllowAnyHeader()
-                    .WithMethods("GET", "POST", "PUT", "DELETE")
+                    .WithMethods("GET", "POST", "PUT", "DELETE")    
                     .WithExposedHeaders("*");
                 });
             }));
@@ -26,6 +30,8 @@ namespace StudentAdminPortal.API
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
             builder.Services.AddDbContext<StudentAdminContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("ConnStr"));
@@ -33,6 +39,7 @@ namespace StudentAdminPortal.API
 
             builder.Services.AddScoped<IStudentRepository, StudentRepository>();
             builder.Services.AddScoped<IGenderRepository, GenderRepository>();
+            builder.Services.AddScoped<IImageRepository, LocalStorageImageRepository>();
 
             builder.Services.AddAutoMapper(typeof(Program).Assembly);
             var app = builder.Build();
@@ -45,6 +52,12 @@ namespace StudentAdminPortal.API
             }
 
             app.UseHttpsRedirection();
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, "Resources")),
+                RequestPath = "/Resources"
+            });
 
             app.UseAuthorization();
             app.UseRouting();
